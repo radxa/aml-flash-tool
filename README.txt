@@ -2,7 +2,7 @@ Hi,
 
 This is the flash-tool for Amlogic platforms.
 This aml-flash-tool script rely on update linux tool that need firstly to be installed.
-Please read the file tools/_install_/README before to proceed here.
+Please run ./INSTALL to install dependency and usb rules.
 
 After than you can call aml-flash-tool.sh from anywhere, it will give you quick help :
 
@@ -42,4 +42,5 @@ It will flash all elements that are part of the aml_upgrade_package.img
 
 Enjoy!
 
-Marco (c) Amlogic
+Support list:
+1. Radxa Zero
