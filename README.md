@@ -33,7 +33,7 @@ Usage      : /usr/local/bin/aml-flash-tool.sh path/to/aml_upgrade_package.img
 
 You should refer to Board indication to power up it into maskrom mode.
 
-When the Soc is in maskrom mode properly,  you linux machine should detect a new usb device
+When the Soc is running in maskrom mode properly,  your linux machine should detect a new usb device
 
 By calling dmesg, you should see something like :
 
