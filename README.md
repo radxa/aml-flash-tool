@@ -19,7 +19,7 @@ Please run
 
  to install dependency and usb rules.
 
-After than you can call aml-flash-tool.sh from anywhere, it will give you quick help :
+After than you can execute aml-flash-tool.sh from anywhere, it will give you quick help :
 
 ```bash
 $ aml-flash-tool.sh
