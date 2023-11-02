@@ -17,7 +17,7 @@ prepare_host() {
 	local deps=()
 	local installed=$(dpkg-query -W -f '${db:Status-Abbrev}|${binary:Package}\n' '*' 2>/dev/null | grep '^ii' | awk -F '|' '{print $2}' | cut -d ':' -f 1)
 
-	if [[ "$DISTRIB" == "Ubuntu" ]] && [[ "$DISTRIB_RELEASE" == "18.10" || "$DISTRIB_RELEASE" =~ "20" || "$DISTRIB_RELEASE" =~ "21" ]]; then
+	if [[ "$DISTRIB" == "Ubuntu" ]] && [[ "$DISTRIB_RELEASE" == "18.10" || "$DISTRIB_RELEASE" =~ "20" || "$DISTRIB_RELEASE" =~ "21" || "$DISTRIB_RELEASE" =~ "22" ]]; then
 		hostdeps="$hostdeps lib32ncurses6"
 	else
 		hostdeps="$hostdeps lib32ncurses5"
@@ -62,7 +62,7 @@ warning_msg() {
 }
 
 if [ "$DISTRIB" != "Ubuntu" ] \
-   || ! [[ "$DISTRIB_RELEASE" =~ "12" || "$DISTRIB_RELEASE" =~ "14" || "$DISTRIB_RELEASE" =~ "16" || "$DISTRIB_RELEASE" =~ "19" || "$DISTRIB_RELEASE" =~ "19" || "$DISTRIB_RELEASE" =~ "20" ]] ; then
+   || ! [[ "$DISTRIB_RELEASE" =~ "12" || "$DISTRIB_RELEASE" =~ "14" || "$DISTRIB_RELEASE" =~ "16" || "$DISTRIB_RELEASE" =~ "19" || "$DISTRIB_RELEASE" =~ "19" || "$DISTRIB_RELEASE" =~ "20" || "$DISTRIB_RELEASE" =~ "22" ]] ; then
 	warning_msg "This flash tool just support Ubuntu LTS now, other distributions haven't been verified!"
 	read -p "Continue any way? [No/yes] " answer
 	if [[ "$answer" != "yes" && "$answer" != "Yes" ]]; then
@@ -79,7 +79,7 @@ if [[ "$DISTRIB_RELEASE" =~ "12" ]]; then
 	RULE="$RULES_DIR/70-persistent-usb-ubuntu12.rules"
 	sudo cp $RULE /etc/udev/rules.d
 	sudo sed -i s/OWNER=\"amlogic\"/OWNER=\"`whoami`\"/g /etc/udev/rules.d/$(basename $RULE)
-elif [[ "$IGNORE_CHECK" == "yes" || "$DISTRIB_RELEASE" =~ "14" || "$DISTRIB_RELEASE" =~ "16" || "$DISTRIB_RELEASE" =~ "18" || "$DISTRIB_RELEASE" =~ "19" || "$DISTRIB_RELEASE" =~ "20" ]]; then
+elif [[ "$IGNORE_CHECK" == "yes" || "$DISTRIB_RELEASE" =~ "14" || "$DISTRIB_RELEASE" =~ "16" || "$DISTRIB_RELEASE" =~ "18" || "$DISTRIB_RELEASE" =~ "19" || "$DISTRIB_RELEASE" =~ "20" || "$DISTRIB_RELEASE" =~ "22" ]]; then
 	RULE="$RULES_DIR/70-persistent-usb-ubuntu14.rules"
 	sudo cp $RULE /etc/udev/rules.d
 else
