@@ -8,16 +8,23 @@ AMLOGIC_TOOL="$BASE/aml-flash-tool.sh"
 RULES_DIR="$BASE/tools/_install_/"
 INSTALL_DIR="/usr/local/bin"
 
-
-DISTRIB=$(cat /etc/lsb-release | grep "DISTRIB_ID" | awk -F "=" '{print $2}')
-DISTRIB_RELEASE=$(cat /etc/lsb-release | grep "DISTRIB_RELEASE" | awk -F "=" '{print $2}')
+if [ -f /etc/lsb-release ]
+then
+    DISTRIB=$(cat /etc/lsb-release | grep "DISTRIB_ID" | awk -F "=" '{print $2}')
+    DISTRIB_RELEASE=$(cat /etc/lsb-release | grep "DISTRIB_RELEASE" | awk -F "=" '{print $2}')
+elif [ -f /etc/debian_version ]
+then
+    DISTRIB="Debian"
+    DISTRIB_NAME=$(grep 'Pin: release a=' /etc/apt/preferences.d/main.pref | awk '{print $3}' | cut -f 2 -d = | sed -e 's/\,//g')
+    DISTRIB_RELEASE=$(cut -f 1 -d . < /etc/debian_version)
+fi
 
 prepare_host() {
 	local hostdeps="libusb-dev git parted lib32z1 lib32stdc++6 libusb-0.1-4 libusb-1.0-0-dev libusb-1.0-0 ccache libncurses5 pv base-files linux-base"
 	local deps=()
 	local installed=$(dpkg-query -W -f '${db:Status-Abbrev}|${binary:Package}\n' '*' 2>/dev/null | grep '^ii' | awk -F '|' '{print $2}' | cut -d ':' -f 1)
 
-	if [[ "$DISTRIB" == "Ubuntu" ]] && [[ "$DISTRIB_RELEASE" == "18.10" || "$DISTRIB_RELEASE" =~ "20" || "$DISTRIB_RELEASE" =~ "21" ]]; then
+	if [[ ( "$DISTRIB" == "Ubuntu" && ( "$DISTRIB_RELEASE" == "18.10" || "$DISTRIB_RELEASE" =~ "20" || "$DISTRIB_RELEASE" =~ "21" ))  || ( "$DISTRIB" == "Debian" && ( "$DISTRIB_RELEASE" == "12" )) ]] ; then
 		hostdeps="$hostdeps lib32ncurses6"
 	else
 		hostdeps="$hostdeps lib32ncurses5"
@@ -75,7 +82,7 @@ fi
 
 echo "Installing USB rules..."
 
-if [[ "$DISTRIB_RELEASE" =~ "12" ]]; then
+if [[ "$DISTRIB" == "Ubuntu" && "$DISTRIB_RELEASE" =~ "12" ]]; then
 	RULE="$RULES_DIR/70-persistent-usb-ubuntu12.rules"
 	sudo cp $RULE /etc/udev/rules.d
 	sudo sed -i s/OWNER=\"amlogic\"/OWNER=\"`whoami`\"/g /etc/udev/rules.d/$(basename $RULE)
@@ -83,7 +90,7 @@ elif [[ "$IGNORE_CHECK" == "yes" || "$DISTRIB_RELEASE" =~ "14" || "$DISTRIB_RELE
 	RULE="$RULES_DIR/70-persistent-usb-ubuntu14.rules"
 	sudo cp $RULE /etc/udev/rules.d
 else
-	error_msg "Ubuntu $DISTRIB_RELEASE haven't been verified! Please copy USB rules yourself"
+	error_msg "${DISTRIB} $DISTRIB_RELEASE haven't been verified! Please copy USB rules yourself"
 	exit 1
 fi
 
